@@ -1,9 +1,9 @@
-import "./App.css";
+import TodoApp from "./TodoApp";
 
 function App() {
   return (
     <>
-      <h1>Hello World</h1>
+      <TodoApp />
     </>
   );
 }
