@@ -11,21 +11,21 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as TodoappImport } from './routes/todoapp'
 import { Route as AboutImport } from './routes/about'
+import { Route as TodoAppImport } from './routes/TodoApp'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
 
-const TodoappRoute = TodoappImport.update({
-  id: '/todoapp',
-  path: '/todoapp',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const AboutRoute = AboutImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const TodoAppRoute = TodoAppImport.update({
+  id: '/TodoApp',
+  path: '/TodoApp',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -46,18 +46,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/TodoApp': {
+      id: '/TodoApp'
+      path: '/TodoApp'
+      fullPath: '/TodoApp'
+      preLoaderRoute: typeof TodoAppImport
+      parentRoute: typeof rootRoute
+    }
     '/about': {
       id: '/about'
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutImport
-      parentRoute: typeof rootRoute
-    }
-    '/todoapp': {
-      id: '/todoapp'
-      path: '/todoapp'
-      fullPath: '/todoapp'
-      preLoaderRoute: typeof TodoappImport
       parentRoute: typeof rootRoute
     }
   }
@@ -67,42 +67,42 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/TodoApp': typeof TodoAppRoute
   '/about': typeof AboutRoute
-  '/todoapp': typeof TodoappRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/TodoApp': typeof TodoAppRoute
   '/about': typeof AboutRoute
-  '/todoapp': typeof TodoappRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/TodoApp': typeof TodoAppRoute
   '/about': typeof AboutRoute
-  '/todoapp': typeof TodoappRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/todoapp'
+  fullPaths: '/' | '/TodoApp' | '/about'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/todoapp'
-  id: '__root__' | '/' | '/about' | '/todoapp'
+  to: '/' | '/TodoApp' | '/about'
+  id: '__root__' | '/' | '/TodoApp' | '/about'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  TodoAppRoute: typeof TodoAppRoute
   AboutRoute: typeof AboutRoute
-  TodoappRoute: typeof TodoappRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  TodoAppRoute: TodoAppRoute,
   AboutRoute: AboutRoute,
-  TodoappRoute: TodoappRoute,
 }
 
 export const routeTree = rootRoute
@@ -116,18 +116,18 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/about",
-        "/todoapp"
+        "/TodoApp",
+        "/about"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
+    "/TodoApp": {
+      "filePath": "TodoApp.tsx"
+    },
     "/about": {
       "filePath": "about.tsx"
-    },
-    "/todoapp": {
-      "filePath": "todoapp.tsx"
     }
   }
 }

@@ -1,77 +1,77 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
-import { FaTrashAlt } from 'react-icons/fa'
-import { MdModeEdit } from 'react-icons/md'
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { FaTrashAlt } from "react-icons/fa";
+import { MdModeEdit } from "react-icons/md";
 
 interface toDoItem {
-  readonly taskId: number
-  description: string
-  isComplete: boolean
-  dateToComplete?: Date
+  readonly taskId: number;
+  description: string;
+  isComplete: boolean;
+  dateToComplete?: Date;
 }
 
 const tasks: toDoItem[] = [
   {
     taskId: 1,
-    description: 'Wash Clothes',
+    description: "Wash Clothes",
     isComplete: true,
   },
   {
     taskId: 2,
-    description: 'Clean my Room',
+    description: "Clean my Room",
     isComplete: false,
   },
   {
     taskId: 3,
-    description: 'Take some protein shake before ',
+    description: "Take some protein shake before ",
     isComplete: false,
   },
   {
     taskId: 4,
-    description: 'Cut my nails',
+    description: "Cut my nails",
     isComplete: false,
   },
-]
+];
 
-export const Route = createFileRoute('/todoapp')({
+export const Route = createFileRoute("/TodoApp")({
   component: TodoApp,
-})
+});
 
 function TodoApp() {
-  const [taskItems, settaskItem] = useState(tasks)
+  const [taskItems, settaskItem] = useState(tasks);
   const handleNewTask = (formdata: FormData) => {
-    const newTask = formdata.get('task') as string
-    if (!newTask.trim()) return // Prevent empty tasks
+    const newTask = formdata.get("task") as string;
+    if (!newTask.trim()) return; // Prevent empty tasks
     const newTaskItem: toDoItem = {
       taskId: taskItems.length + 1,
       description: newTask,
       isComplete: false,
-    }
+    };
 
     if (newTask != null) {
-      settaskItem((prev) => [...prev, newTaskItem])
+      settaskItem((prev) => [...prev, newTaskItem]);
     }
-  }
+  };
 
   const handleDeleteItem = (taskId: number) => {
     const newTaskList = taskItems.filter((item) => {
-      return item.taskId != taskId
-    })
-    settaskItem(newTaskList)
-  }
+      return item.taskId != taskId;
+    });
+    settaskItem(newTaskList);
+  };
 
   const handleCompleteItem = (taskId: number) => {
-    let editedList: toDoItem[] = []
+    let editedList: toDoItem[] = [];
 
     taskItems.map((item) => {
       if (item.taskId == taskId) {
-        item = { ...item, isComplete: !item.isComplete }
+        item = { ...item, isComplete: !item.isComplete };
       }
-      editedList = editedList.concat(item)
-    })
+      editedList = editedList.concat(item);
+    });
 
-    settaskItem(editedList)
-  }
+    settaskItem(editedList);
+  };
   return (
     <main>
       <div className=" flex flex-col h-screen gap-3.5 justify-center items-center border border-black border-solid">
@@ -93,7 +93,7 @@ function TodoApp() {
         <div>
           <ul className="list-disc list-inside">
             {taskItems.map((item) => {
-              const { taskId, description, isComplete } = item
+              const { taskId, description, isComplete } = item;
               return (
                 <li
                   className="flex gap-2 justify-between items-center"
@@ -104,7 +104,7 @@ function TodoApp() {
                     onClick={() => handleCompleteItem(taskId)}
                     checked={isComplete}
                   />
-                  <span className={isComplete ? 'line-through' : undefined}>
+                  <span className={isComplete ? "line-through" : undefined}>
                     {description}
                   </span>
                   <button
@@ -115,13 +115,13 @@ function TodoApp() {
                     <FaTrashAlt />
                   </button>
                 </li>
-              )
+              );
             })}
           </ul>
         </div>
       </div>
     </main>
-  )
+  );
 }
 
 // export default TodoApp;
