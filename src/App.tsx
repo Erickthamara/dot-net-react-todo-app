@@ -1,9 +1,8 @@
-import TodoApp from "./TodoApp";
-
 function App() {
   return (
     <>
-      <TodoApp />
+      {/* <TodoApp /> */}
+      Hello world
     </>
   );
 }
