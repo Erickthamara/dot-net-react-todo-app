@@ -1,10 +1,20 @@
-import { createFileRoute, useSearch } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  useLoaderData,
+  useSearch,
+} from "@tanstack/react-router";
 
 export const Route = createFileRoute("/edittodo/$edittodo")({
-  component: RouteComponent,
+  component: EditTask,
+  loader: async ({ params }) => {
+    return {
+      edittodo: params.edittodo,
+    };
+  },
 });
 
-function RouteComponent() {
+function EditTask() {
   //   const { description, isComplete } = Route.useSearch();
-  return <div>Hello "/edittodo/$edittodo"!</div>;
+  const { edittodo } = Route.useLoaderData();
+  return <div>Hello {edittodo}</div>;
 }
