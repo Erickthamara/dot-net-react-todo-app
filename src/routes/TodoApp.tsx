@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import { MdModeEdit } from "react-icons/md";
+import { Link } from "@tanstack/react-router";
+import { SearchParser } from "@tanstack/react-router";
 
 interface toDoItem {
   readonly taskId: number;
@@ -39,6 +41,7 @@ export const Route = createFileRoute("/TodoApp")({
 
 function TodoApp() {
   const [taskItems, settaskItem] = useState(tasks);
+
   const handleNewTask = (formdata: FormData) => {
     const newTask = formdata.get("task") as string;
     if (!newTask.trim()) return; // Prevent empty tasks
@@ -58,6 +61,12 @@ function TodoApp() {
       return item.taskId != taskId;
     });
     settaskItem(newTaskList);
+  };
+  const handleEditItem = (taskId: number) => {
+    const newTaskList = taskItems.filter((item) => {
+      return item.taskId != taskId;
+    });
+    settaskItem((prev) => [...newTaskList]);
   };
 
   const handleCompleteItem = (taskId: number) => {
@@ -107,13 +116,29 @@ function TodoApp() {
                   <span className={isComplete ? "line-through" : undefined}>
                     {description}
                   </span>
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteItem(taskId)}
-                    // onSubmit={() => console.log(`Hello world`)}
-                  >
-                    <FaTrashAlt />
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      // onClick={() => handleDeleteItem(taskId)}
+                    >
+                      <Link
+                        to="/edittodo/$edittodo"
+                        params={{ edittodo: String(taskId) }}
+                        search={{
+                          description: description,
+                          isComplete: isComplete,
+                        }}
+                      >
+                        <MdModeEdit />
+                      </Link>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteItem(taskId)}
+                    >
+                      <FaTrashAlt />
+                    </button>
+                  </div>
                 </li>
               );
             })}

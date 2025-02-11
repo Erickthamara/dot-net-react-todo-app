@@ -14,6 +14,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as AboutImport } from './routes/about'
 import { Route as TodoAppImport } from './routes/TodoApp'
 import { Route as IndexImport } from './routes/index'
+import { Route as EdittodoEdittodoImport } from './routes/edittodo/$edittodo'
 
 // Create/Update Routes
 
@@ -32,6 +33,12 @@ const TodoAppRoute = TodoAppImport.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const EdittodoEdittodoRoute = EdittodoEdittodoImport.update({
+  id: '/edittodo/$edittodo',
+  path: '/edittodo/$edittodo',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -60,6 +67,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
+    '/edittodo/$edittodo': {
+      id: '/edittodo/$edittodo'
+      path: '/edittodo/$edittodo'
+      fullPath: '/edittodo/$edittodo'
+      preLoaderRoute: typeof EdittodoEdittodoImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -69,12 +83,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/TodoApp': typeof TodoAppRoute
   '/about': typeof AboutRoute
+  '/edittodo/$edittodo': typeof EdittodoEdittodoRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/TodoApp': typeof TodoAppRoute
   '/about': typeof AboutRoute
+  '/edittodo/$edittodo': typeof EdittodoEdittodoRoute
 }
 
 export interface FileRoutesById {
@@ -82,14 +98,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/TodoApp': typeof TodoAppRoute
   '/about': typeof AboutRoute
+  '/edittodo/$edittodo': typeof EdittodoEdittodoRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/TodoApp' | '/about'
+  fullPaths: '/' | '/TodoApp' | '/about' | '/edittodo/$edittodo'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/TodoApp' | '/about'
-  id: '__root__' | '/' | '/TodoApp' | '/about'
+  to: '/' | '/TodoApp' | '/about' | '/edittodo/$edittodo'
+  id: '__root__' | '/' | '/TodoApp' | '/about' | '/edittodo/$edittodo'
   fileRoutesById: FileRoutesById
 }
 
@@ -97,12 +114,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   TodoAppRoute: typeof TodoAppRoute
   AboutRoute: typeof AboutRoute
+  EdittodoEdittodoRoute: typeof EdittodoEdittodoRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   TodoAppRoute: TodoAppRoute,
   AboutRoute: AboutRoute,
+  EdittodoEdittodoRoute: EdittodoEdittodoRoute,
 }
 
 export const routeTree = rootRoute
@@ -117,7 +136,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/TodoApp",
-        "/about"
+        "/about",
+        "/edittodo/$edittodo"
       ]
     },
     "/": {
@@ -128,6 +148,9 @@ export const routeTree = rootRoute
     },
     "/about": {
       "filePath": "about.tsx"
+    },
+    "/edittodo/$edittodo": {
+      "filePath": "edittodo/$edittodo.tsx"
     }
   }
 }
