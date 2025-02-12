@@ -3,7 +3,10 @@ import { useState } from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import { MdModeEdit } from "react-icons/md";
 import { Link } from "@tanstack/react-router";
-import { SearchParser } from "@tanstack/react-router";
+import { useEffect } from "react";
+import axios from "axios";
+
+// const axios = require("axios").default;
 
 interface toDoItem {
   readonly taskId: number;
@@ -12,35 +15,53 @@ interface toDoItem {
   dateToComplete?: Date;
 }
 
-const tasks: toDoItem[] = [
-  {
-    taskId: 1,
-    description: "Wash Clothes",
-    isComplete: true,
-  },
-  {
-    taskId: 2,
-    description: "Clean my Room",
-    isComplete: false,
-  },
-  {
-    taskId: 3,
-    description: "Take some protein shake before ",
-    isComplete: false,
-  },
-  {
-    taskId: 4,
-    description: "Cut my nails",
-    isComplete: false,
-  },
-];
+// const tasks: toDoItem[] = [
+//   {
+//     taskId: 1,
+//     description: "Wash Clothes",
+//     isComplete: true,
+//   },
+//   {
+//     taskId: 2,
+//     description: "Clean my Room",
+//     isComplete: false,
+//   },
+//   {
+//     taskId: 3,
+//     description: "Take some protein shake before ",
+//     isComplete: false,
+//   },
+//   {
+//     taskId: 4,
+//     description: "Cut my nails",
+//     isComplete: false,
+//   },
+// ];
 
 export const Route = createFileRoute("/TodoApp")({
   component: TodoApp,
 });
 
 function TodoApp() {
-  const [taskItems, settaskItem] = useState(tasks);
+  const [taskItems, settaskItem] = useState<toDoItem[]>([]);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        console.log("hello");
+
+        const response = await axios.get(
+          "https://localhost:7151/api/ToDoItems"
+        );
+        const data = await response.data;
+        console.log(data);
+        settaskItem(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchTasks();
+  });
 
   const handleNewTask = (formdata: FormData) => {
     const newTask = formdata.get("task") as string;
