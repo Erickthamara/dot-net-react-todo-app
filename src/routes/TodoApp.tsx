@@ -9,10 +9,10 @@ import axios from "axios";
 // const axios = require("axios").default;
 
 interface toDoItem {
-  readonly taskId: number;
-  description: string;
-  isComplete: boolean;
-  dateToComplete?: Date;
+  readonly id: number;
+  name: string;
+  IsComplete: boolean;
+  DueDate?: Date;
 }
 
 // const tasks: toDoItem[] = [
@@ -54,22 +54,21 @@ function TodoApp() {
           "https://localhost:7151/api/ToDoItems"
         );
         const data = await response.data;
-        console.log(data);
         settaskItem(data);
       } catch (error) {
         console.error(error);
       }
     };
     fetchTasks();
-  });
+  }, []);
 
   const handleNewTask = (formdata: FormData) => {
     const newTask = formdata.get("task") as string;
     if (!newTask.trim()) return; // Prevent empty tasks
     const newTaskItem: toDoItem = {
-      taskId: taskItems.length + 1,
-      description: newTask,
-      isComplete: false,
+      id: taskItems.length + 1,
+      name: newTask,
+      IsComplete: false,
     };
 
     if (newTask != null) {
@@ -79,23 +78,23 @@ function TodoApp() {
 
   const handleDeleteItem = (taskId: number) => {
     const newTaskList = taskItems.filter((item) => {
-      return item.taskId != taskId;
+      return item.id != taskId;
     });
     settaskItem(newTaskList);
   };
-  const handleEditItem = (taskId: number) => {
-    const newTaskList = taskItems.filter((item) => {
-      return item.taskId != taskId;
-    });
-    settaskItem((prev) => [...newTaskList]);
-  };
+  // const handleEditItem = (taskId: number) => {
+  //   const newTaskList = taskItems.filter((item) => {
+  //     return item.taskId != taskId;
+  //   });
+  //   settaskItem((prev) => [...newTaskList]);
+  // };
 
   const handleCompleteItem = (taskId: number) => {
     let editedList: toDoItem[] = [];
 
     taskItems.map((item) => {
-      if (item.taskId == taskId) {
-        item = { ...item, isComplete: !item.isComplete };
+      if (item.id == taskId) {
+        item = { ...item, IsComplete: !item.IsComplete };
       }
       editedList = editedList.concat(item);
     });
@@ -123,19 +122,19 @@ function TodoApp() {
         <div>
           <ul className="list-disc list-inside">
             {taskItems.map((item) => {
-              const { taskId, description, isComplete } = item;
+              const { id, name, IsComplete } = item;
               return (
                 <li
                   className="flex gap-2 justify-between items-center"
-                  key={taskId}
+                  key={id}
                 >
                   <input
                     type="checkbox"
-                    onClick={() => handleCompleteItem(taskId)}
-                    checked={isComplete}
+                    onClick={() => handleCompleteItem(id)}
+                    checked={IsComplete}
                   />
-                  <span className={isComplete ? "line-through" : undefined}>
-                    {description}
+                  <span className={IsComplete ? "line-through" : undefined}>
+                    {name}
                   </span>
                   <div className="flex gap-2">
                     <button
@@ -144,19 +143,16 @@ function TodoApp() {
                     >
                       <Link
                         to="/edittodo/$edittodo"
-                        params={{ edittodo: String(taskId) }}
+                        params={{ edittodo: String(id) }}
                         search={{
-                          description: description,
-                          isComplete: isComplete,
+                          description: name,
+                          isComplete: IsComplete,
                         }}
                       >
                         <MdModeEdit />
                       </Link>
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteItem(taskId)}
-                    >
+                    <button type="button" onClick={() => handleDeleteItem(id)}>
                       <FaTrashAlt />
                     </button>
                   </div>
