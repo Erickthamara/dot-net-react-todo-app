@@ -8,7 +8,7 @@ import axios from "axios";
 
 // const axios = require("axios").default;
 
-interface toDoItem {
+export interface toDoItem {
   readonly id: number;
   name: string;
   IsComplete: boolean;
@@ -144,10 +144,6 @@ function TodoApp() {
                       <Link
                         to="/edittodo/$edittodo"
                         params={{ edittodo: String(id) }}
-                        search={{
-                          description: name,
-                          isComplete: IsComplete,
-                        }}
                       >
                         <MdModeEdit />
                       </Link>

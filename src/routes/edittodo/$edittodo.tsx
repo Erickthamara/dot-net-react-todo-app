@@ -1,5 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import axios from "axios";
+import { Button } from "@/components/ui/button";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { toDoFields, toDoItemSchema } from "@/lib/definitions";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export const Route = createFileRoute("/edittodo/$edittodo")({
   component: EditTask,
@@ -26,23 +30,59 @@ export const Route = createFileRoute("/edittodo/$edittodo")({
       };
     }
   },
+  pendingComponent: () => <div>Loading...</div>,
+  errorComponent: () => <div>Error</div>,
 });
 
 function EditTask() {
-  //   const { description, isComplete } = Route.useSearch();
   const { edittodo, description, isComplete } = Route.useLoaderData();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<toDoFields>({
+    resolver: zodResolver(toDoItemSchema),
+  });
 
-  const handlesubmit = (formdata: FormData) => {
-    console.log(`Task: ${formdata.get("task")}`);
+  const submitAction: SubmitHandler<toDoFields> = async (formdata) => {
+    const editedTask = { ...formdata, id: edittodo };
+    try {
+      const response = await axios.put(
+        `https://localhost:7151/api/ToDoItems/${edittodo}`,
+        editedTask
+      );
+      const data = await response.data;
+      // console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
-    <div>
-      <form action={handlesubmit} className="flex flex-col">
+    <div className="flex items-center justify-center h-screen w-screen">
+      <form onSubmit={handleSubmit(submitAction)} className=" flex flex-col">
         <label htmlFor="">Task</label>
-        <input type="text" name="task" value={description} />
+        <input type="text" {...register("name")} defaultValue={description} />
+        {errors.name?.message && (
+          <p className="text-red-600">{errors.name.message}</p>
+        )}
         <label htmlFor="">Is Complete</label>
-        <input type="checkbox" checked={isComplete} />
-        <button type="submit">Submit</button>
+        <div className="flex gap-2">
+          <p>Checked</p>
+          <input
+            type="checkbox"
+            {...register("isComplete")}
+            defaultChecked={isComplete}
+          />
+        </div>
+        {isSubmitting ? (
+          <Button type="submit" variant="default" disabled={true}>
+            Loading....
+          </Button>
+        ) : (
+          <Button type="submit" variant="default">
+            Save
+          </Button>
+        )}
       </form>
     </div>
   );
