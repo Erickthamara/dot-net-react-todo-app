@@ -2,7 +2,7 @@ function App() {
   return (
     <>
       {/* <TodoApp /> */}
-      Hello world
+      Hello world i am a component
     </>
   );
 }

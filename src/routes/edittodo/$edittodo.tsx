@@ -47,11 +47,11 @@ function EditTask() {
   const submitAction: SubmitHandler<toDoFields> = async (formdata) => {
     const editedTask = { ...formdata, id: edittodo };
     try {
-      const response = await axios.put(
+      await axios.put(
         `https://localhost:7151/api/ToDoItems/${edittodo}`,
         editedTask
       );
-      const data = await response.data;
+      // const data = await response.data;git
       // console.log(data);
     } catch (error) {
       console.error(error);

@@ -5,6 +5,9 @@ import { MdModeEdit } from "react-icons/md";
 import { Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 import axios from "axios";
+import { fetchTasks } from "@/api/todoApi";
+import { useQuery } from "@tanstack/react-query";
+import { error } from "console";
 
 // const axios = require("axios").default;
 
@@ -45,22 +48,28 @@ export const Route = createFileRoute("/TodoApp")({
 function TodoApp() {
   const [taskItems, settaskItem] = useState<toDoItem[]>([]);
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        console.log("hello");
+  const { isPending, data, error } = useQuery({
+    queryKey: ["todos"],
+    queryFn: fetchTasks,
+  });
 
-        const response = await axios.get(
-          "https://localhost:7151/api/ToDoItems"
-        );
-        const data = await response.data;
-        settaskItem(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchTasks();
-  }, []);
+  // useEffect(() => {
+  //   // const fetchTasks = async () => {
+  //   //   try {
+  //   //     console.log("hello");
+  //   //     const response = await axios.get(
+  //   //       "https://localhost:7151/api/ToDoItems"
+  //   //     );
+  //   //     const data = await response.data;
+  //   //     settaskItem(data);
+  //   //   } catch (error) {
+  //   //     console.error(error);
+  //   //   }
+  //   // };
+  //   // fetchTasks();
+  //   // const testdata = fetchTasks();
+  //   // console.log(testdata);
+  // }, []);
 
   const handleNewTask = (formdata: FormData) => {
     const newTask = formdata.get("task") as string;
@@ -81,6 +90,7 @@ function TodoApp() {
       return item.id != taskId;
     });
     settaskItem(newTaskList);
+    // data = newTaskList;
   };
   // const handleEditItem = (taskId: number) => {
   //   const newTaskList = taskItems.filter((item) => {
@@ -101,6 +111,10 @@ function TodoApp() {
 
     settaskItem(editedList);
   };
+
+  if (isPending) return <div>Loading...</div>;
+
+  if (error) return <div>An console.error occurred: {error.message} </div>;
   return (
     <main>
       <div className=" flex flex-col h-screen gap-3.5 justify-center items-center border border-black border-solid">
@@ -121,7 +135,7 @@ function TodoApp() {
         </form>
         <div>
           <ul className="list-disc list-inside">
-            {taskItems.map((item) => {
+            {data.map((item) => {
               const { id, name, IsComplete } = item;
               return (
                 <li
