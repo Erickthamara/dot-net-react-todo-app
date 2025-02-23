@@ -5,8 +5,8 @@ import { MdModeEdit } from "react-icons/md";
 import { Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 import axios from "axios";
-import { fetchTasks } from "@/api/todoApi";
-import { useQuery } from "@tanstack/react-query";
+import { fetchTasks, addTask, deleteTask } from "@/api/todoApi";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { error } from "console";
 
 // const axios = require("axios").default;
@@ -47,51 +47,54 @@ export const Route = createFileRoute("/TodoApp")({
 
 function TodoApp() {
   const [taskItems, settaskItem] = useState<toDoItem[]>([]);
+  const queryClient = useQueryClient();
 
-  const { isPending, data, error } = useQuery({
+  const {
+    isPending,
+    data: existingTodoList,
+    error,
+  } = useQuery({
     queryKey: ["todos"],
     queryFn: fetchTasks,
+    refetchInterval: 10000,
   });
 
-  // useEffect(() => {
-  //   // const fetchTasks = async () => {
-  //   //   try {
-  //   //     console.log("hello");
-  //   //     const response = await axios.get(
-  //   //       "https://localhost:7151/api/ToDoItems"
-  //   //     );
-  //   //     const data = await response.data;
-  //   //     settaskItem(data);
-  //   //   } catch (error) {
-  //   //     console.error(error);
-  //   //   }
-  //   // };
-  //   // fetchTasks();
-  //   // const testdata = fetchTasks();
-  //   // console.log(testdata);
-  // }, []);
+  const { mutate: createNewTask } = useMutation({
+    mutationFn: addTask,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
+  });
+  const { mutate: deleteTodoTask } = useMutation({
+    mutationFn: (id: number) => deleteTask(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
+  });
 
   const handleNewTask = (formdata: FormData) => {
     const newTask = formdata.get("task") as string;
-    if (!newTask.trim()) return; // Prevent empty tasks
+    if (newTask.trim() === "") return; // Prevent empty tasks
     const newTaskItem: toDoItem = {
       id: taskItems.length + 1,
       name: newTask,
       IsComplete: false,
     };
+    createNewTask(newTaskItem);
 
-    if (newTask != null) {
-      settaskItem((prev) => [...prev, newTaskItem]);
-    }
+    // if (newTask != null) {
+    //   settaskItem((prev) => [...prev, newTaskItem]);
+    // }
   };
 
-  const handleDeleteItem = (taskId: number) => {
-    const newTaskList = taskItems.filter((item) => {
-      return item.id != taskId;
-    });
-    settaskItem(newTaskList);
-    // data = newTaskList;
-  };
+  // const handleDeleteItem = (taskId: number) => {
+  //   deleteTodoTask(taskId);
+  //   // const newTaskList = taskItems.filter((item) => {
+  //   //   return item.id != taskId;
+  //   // });
+  //   // settaskItem(newTaskList);
+  //   // data = newTaskList;
+  // };
   // const handleEditItem = (taskId: number) => {
   //   const newTaskList = taskItems.filter((item) => {
   //     return item.taskId != taskId;
@@ -135,7 +138,7 @@ function TodoApp() {
         </form>
         <div>
           <ul className="list-disc list-inside">
-            {data.map((item) => {
+            {existingTodoList.map((item) => {
               const { id, name, IsComplete } = item;
               return (
                 <li
@@ -162,7 +165,7 @@ function TodoApp() {
                         <MdModeEdit />
                       </Link>
                     </button>
-                    <button type="button" onClick={() => handleDeleteItem(id)}>
+                    <button type="button" onClick={() => deleteTodoTask(id)}>
                       <FaTrashAlt />
                     </button>
                   </div>
